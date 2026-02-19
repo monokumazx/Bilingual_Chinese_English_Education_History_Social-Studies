@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elementary History & Social Studies · 小学历史与社会词汇表 (Grades 1–6)</title>
+    <!-- pinyin library -->
+    <script src="https://unpkg.com/pinyin@2.9.0/lib/web-pinyin.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0ebe5;
+            color: #2e3b4e;
+            line-height: 1.5;
+            padding: 1.5rem;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -12px rgba(60,40,20,0.25);
+            padding: 2rem 2rem 2.5rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #cfb797;
+            padding-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #4a3b28;
+        }
+        h1 small {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #7d684e;
+            display: block;
+            margin-top: 0.3rem;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .controls input, .controls button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 40px;
+            border: 1px solid #cfb797;
+            background: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .controls input {
+            flex: 1 1 250px;
+            min-width: 200px;
+            border: 2px solid #cfb797;
+        }
+        .controls button {
+            background: #7d684e;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .controls button:hover {
+            background: #4a3b28;
+            transform: translateY(-2px);
+        }
+        .flashcard-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        .flashcard {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            background: #f9f0da;
+            border-radius: 40px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid #b39364;
+            margin-bottom: 2rem;
+        }
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+        .flashcard .eng {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1f5068;
+        }
+        .flashcard .chi {
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #2d6d8a;
+            margin-top: 1rem;
+        }
+        .flashcard .example {
+            font-size: 1.2rem;
+            color: #3f5465;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        .flashcard-controls {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        .flashcard-controls button {
+            padding: 0.8rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 40px;
+            border: none;
+            background: #7d684e;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .flashcard-controls button:disabled {
+            background: #b7a68f;
+            cursor: not-allowed;
+        }
+        .flashcard-controls #toggleFront {
+            background: #e0a458;
+            color: #1e2b3c;
+        }
+        .toc {
+            background: #e7dac9;
+            border-radius: 40px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem 3rem;
+        }
+        .toc a {
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #4a3b28;
+            background: white;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            box-shadow: 0 4px 6px rgba(60,40,20,0.1);
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+        .toc a:hover {
+            background: #ffe68f;
+            border-color: #cb9e2b;
+            transform: translateY(-2px);
+        }
+        section {
+            margin-bottom: 3.5rem;
+            scroll-margin-top: 1.5rem;
+        }
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            border-left: 12px solid #b39364;
+            padding-left: 1.2rem;
+            margin-bottom: 1.8rem;
+            color: #4a3b28;
+        }
+        h2 .chi {
+            font-size: 1.7rem;
+            font-weight: 300;
+            color: #7d684e;
+            margin-left: 0.8rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(60,40,20,0.08);
+            margin-bottom: 1rem;
+        }
+        th {
+            background: #7d684e;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            padding: 1rem 1.2rem;
+            text-align: left;
+        }
+        th:first-child { border-radius: 16px 0 0 0; }
+        th:last-child { border-radius: 0 16px 0 0; }
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #e0d2c0;
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .icon-cell {
+            font-size: 1.6rem;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            width: 50px;
+        }
+        .icon-cell svg {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .eng-term {
+            font-weight: 600;
+            color: #4a3b28;
+            font-size: 1.1rem;
+        }
+        .chi-term {
+            font-weight: 500;
+            color: #7d684e;
+        }
+        .definition {
+            color: #5e5a55;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .definition i {
+            color: #7d684e;
+        }
+        .speaker {
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 1.2rem;
+            display: inline-block;
+            transition: 0.1s;
+        }
+        .speaker:hover {
+            transform: scale(1.2);
+            color: #ff8c42;
+        }
+        ruby {
+            ruby-align: center;
+        }
+        rt {
+            font-size: 0.8rem;
+            color: #555;
+            font-weight: normal;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #faf6f0;
+        }
+        tbody tr:hover {
+            background-color: #fff1cf;
+        }
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #7d684e;
+            border-top: 2px dashed #cfb797;
+            padding-top: 2rem;
+        }
+        .footnote {
+            background: #f1eae1;
+            border-radius: 30px;
+            padding: 1.2rem;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 700px) {
+            body { padding: 0.8rem; }
+            h1 { font-size: 2rem; }
+            .toc { flex-direction: column; align-items: center; gap: 0.8rem; }
+            .toc a { width: 100%; text-align: center; }
+            th, td { padding: 0.8rem; }
+            .icon-cell { font-size: 1.2rem; width: 30px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📜 Elementary History & Social Studies <span style="font-weight:300;">·</span> 小学历史与社会词汇表</h1>
+        <p style="font-size:1.3rem; color:#7d684e;">Grades 1–6  |  一年级至六年级</p>
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="🔍 Search English or Chinese... 搜索英文或中文...">
+            <button id="flashcardBtn">🃏 Flashcard Mode</button>
+            <button id="glossaryBtn" style="display:none;">📖 Back to Glossary</button>
+        </div>
+    </header>
+
+    <!-- Flashcard view -->
+    <div id="flashcardContainer" class="flashcard-container">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div id="cardEnglish" class="eng">English</div>
+            <div id="cardChinese" class="chi" style="display: none;"></div>
+            <div id="cardExample" class="example" style="display: none;"></div>
+        </div>
+        <div class="flashcard-controls">
+            <button id="prevCard" disabled>◀ Previous</button>
+            <button id="shuffleCards">🔄 Shuffle</button>
+            <button id="nextCard">Next ▶</button>
+            <button id="toggleFront">Front: English</button>
+        </div>
+        <p id="cardCount">1 / 1</p>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc" id="toc">
+        <a href="#history">1. History & Time<br>历史与时间</a>
+        <a href="#geography">2. Geography & Maps<br>地理与地图</a>
+        <a href="#civics">3. Civics & Government<br>公民与政府</a>
+        <a href="#economics">4. Economics & Culture<br>经济与文化</a>
+        <a href="#world">5. World Cultures & Traditions<br>世界文化与传统</a>
+    </div>
+
+    <!-- All glossary sections (with bilingual definitions) -->
+    <div id="glossarySections">
+        <!-- SECTION 1 – HISTORY & TIME (with icons) -->
+        <section id="history">
+            <h2>1. History & Time <span class="chi">历史与时间</span></h2>
+            <table class="glossary-table">
+                <thead><tr><th>Icon</th><th>English</th><th>简体中文</th><th>Definition / 定义</th></tr></thead>
+                <tbody>
+                    <tr><td class="icon-cell">📅</td><td class="eng-term">Past</td><td class="chi-term">过去</td><td class="definition">Time that has already happened. / 已经发生过的时间。</td></tr>
+                    <tr><td class="icon-cell">⏳</td><td class="eng-term">Present</td><td class="chi-term">现在</td><td class="definition">Time happening now. / 正在发生的时间。</td></tr>
+                    <tr><td class="icon-cell">🔮</td><td class="eng-term">Future</td><td class="chi-term">未来</td><td class="definition">Time that has not yet happened. / 还没有发生的时间。</td></tr>
+                    <tr><td class="icon-cell">📆</td><td class="eng-term">Timeline</td><td class="chi-term">时间线</td><td class="definition">A line showing when events happened. / 展示事件发生顺序的线条。</td></tr>
+                    <tr><td class="icon-cell">📏</td><td class="eng-term">Decade</td><td class="chi-term">十年</td><td class="definition">A period of ten years. / 十年的时间。</td></tr>
+                    <tr><td class="icon-cell">💯</td><td class="eng-term">Century</td><td class="chi-term">世纪</td><td class="definition">A period of one hundred years. / 一百年的时间。</td></tr>
+                    <tr><td class="icon-cell">🗿</td><td class="eng-term">Ancient</td><td class="chi-term">古代</td><td class="definition">Very long ago, from early history. / 很久以前，早期历史的。</td></tr>
+                    <tr><td class="icon-cell">🏙️</td><td class="eng-term">Modern</td><td class="chi-term">现代</td><td class="definition">Recent times, present or near past. / 最近的、当前或近期的。</td></tr>
+                    <tr><td class="icon-cell">👨‍👩‍👧</td><td class="eng-term">Family</td><td class="chi-term">家庭</td><td class="definition">A group of people related by blood or marriage. / 有血缘或婚姻关系的一群人。</td></tr>
+                    <tr><td class="icon-cell">🏘️</td><td class="eng-term">Community</td><td class="chi-term">社区</td><td class="definition">People living in the same area or sharing interests. / 住在同一地区或有共同兴趣的人们。</td></tr>
+                    <tr><td class="icon-cell">🎉</td><td class="eng-term">Tradition</td><td class="chi-term">传统</td><td class="definition">A custom or belief passed down over time. / 代代相传的习俗或信仰。</td></tr>
+                    <tr><td class="icon-cell">🧭</td><td class="eng-term">Explorer</td><td class="chi-term">探险家</td><td class="definition">A person who travels to unknown places to learn about them. / 去未知地方旅行并了解它们的人。</td></tr>
+                    <tr><td class="icon-cell">⛵</td><td class="eng-term">Colony</td><td class="chi-term">殖民地</td><td class="definition">A settlement ruled by a distant country. / 由远方国家统治的定居地。</td></tr>
+                    <tr><td class="icon-cell">⚔️</td><td class="eng-term">Revolution</td><td class="chi-term">革命</td><td class="definition">A big change in government or society, often by force. / 政府或社会的巨大变革，常通过武力。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">President</td><td class="chi-term">总统</td><td class="definition">The elected leader of a republic (like the U.S.). / 共和国选举的领导人（如美国）。</td></tr>
+                    <tr><td class="icon-cell">📜</td><td class="eng-term">History</td><td class="chi-term">历史</td><td class="definition">The study of past events. / 对过去事件的研究。</td></tr>
+                    <tr><td class="icon-cell">🏺</td><td class="eng-term">Artifact</td><td class="chi-term">文物</td><td class="definition">An object made by people in the past. / 过去人们制造的物品。</td></tr>
+                    <tr><td class="icon-cell">🦴</td><td class="eng-term">Archaeology</td><td class="chi-term">考古学</td><td class="definition">The study of past cultures through artifacts. / 通过文物研究过去的文化。</td></tr>
+                    <tr><td class="icon-cell">📖</td><td class="eng-term">Primary source</td><td class="chi-term">原始资料</td><td class="definition">An original document or object from the time being studied. / 研究时代的原始文件或物品。</td></tr>
+                    <tr><td class="icon-cell">📚</td><td class="eng-term">Secondary source</td><td class="chi-term">二手资料</td><td class="definition">A document or account written later about the past. / 后来撰写的关于过去的文件或记述。</td></tr>
+                    <!-- New terms added -->
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Civilization</td><td class="chi-term">文明</td><td class="definition">A complex society with cities, government, and culture. / 拥有城市、政府和文化的复杂社会。</td></tr>
+                    <tr><td class="icon-cell">👑</td><td class="eng-term">Empire</td><td class="chi-term">帝国</td><td class="definition">A group of countries or regions ruled by one emperor or empress. / 由一个皇帝或女皇统治的一组国家或地区。</td></tr>
+                    <tr><td class="icon-cell">🕊️</td><td class="eng-term">Pilgrim</td><td class="chi-term">朝圣者</td><td class="definition">A person who travels for religious reasons. / 因宗教原因旅行的人。</td></tr>
+                    <tr><td class="icon-cell">⚓</td><td class="eng-term">Settlement</td><td class="chi-term">定居点</td><td class="definition">A place where people establish a community. / 人们建立社区的地方。</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 2 – GEOGRAPHY & MAPS (with icons) -->
+        <section id="geography">
+            <h2>2. Geography & Maps <span class="chi">地理与地图</span></h2>
+            <table class="glossary-table">
+                <thead><tr><th>Icon</th><th>English</th><th>简体中文</th><th>Definition / 定义</th></tr></thead>
+                <tbody>
+                    <tr><td class="icon-cell">🗺️</td><td class="eng-term">Map</td><td class="chi-term">地图</td><td class="definition">A drawing of an area showing features like roads, cities, and rivers. / 显示道路、城市、河流等特征的区域图。</td></tr>
+                    <tr><td class="icon-cell">🌍</td><td class="eng-term">Globe</td><td class="chi-term">地球仪</td><td class="definition">A round model of Earth. / 地球的球形模型。</td></tr>
+                    <tr><td class="icon-cell">🧭</td><td class="eng-term">Compass rose</td><td class="chi-term">指南针玫瑰</td><td class="definition">A symbol on a map showing directions (N, S, E, W). / 地图上显示方向（北、南、东、西）的符号。</td></tr>
+                    <tr><td class="icon-cell">⬆️</td><td class="eng-term">North</td><td class="chi-term">北</td><td class="definition">The direction toward the North Pole. / 朝向北极的方向。</td></tr>
+                    <tr><td class="icon-cell">⬇️</td><td class="eng-term">South</td><td class="chi-term">南</td><td class="definition">The direction toward the South Pole. / 朝向南极的方向。</td></tr>
+                    <tr><td class="icon-cell">⬅️</td><td class="eng-term">West</td><td class="chi-term">西</td><td class="definition">The direction where the sun sets. / 太阳落下的方向。</td></tr>
+                    <tr><td class="icon-cell">➡️</td><td class="eng-term">East</td><td class="chi-term">东</td><td class="definition">The direction where the sun rises. / 太阳升起的方向。</td></tr>
+                    <tr><td class="icon-cell">🏞️</td><td class="eng-term">Landform</td><td class="chi-term">地形</td><td class="definition">A natural feature of Earth's surface, like a mountain or valley. / 地球表面的自然特征，如山或山谷。</td></tr>
+                    <tr><td class="icon-cell">⛰️</td><td class="eng-term">Mountain</td><td class="chi-term">山</td><td class="definition">A very high, steep area of land. / 非常高而陡峭的土地。</td></tr>
+                    <tr><td class="icon-cell">🏜️</td><td class="eng-term">Desert</td><td class="chi-term">沙漠</td><td class="definition">A dry area with little rain and few plants. / 雨量稀少、植物稀少的干燥地区。</td></tr>
+                    <tr><td class="icon-cell">🌊</td><td class="eng-term">Ocean</td><td class="chi-term">海洋</td><td class="definition">A huge body of salt water. / 巨大的咸水体。</td></tr>
+                    <tr><td class="icon-cell">🏝️</td><td class="eng-term">Island</td><td class="chi-term">岛屿</td><td class="definition">Land completely surrounded by water. / 完全被水包围的陆地。</td></tr>
+                    <tr><td class="icon-cell">🌋</td><td class="eng-term">Volcano</td><td class="chi-term">火山</td><td class="definition">A mountain that can erupt with lava, ash, and gas. / 可能喷发熔岩、火山灰和气体的山。</td></tr>
+                    <tr><td class="icon-cell">🏞️</td><td class="eng-term">River</td><td class="chi-term">河流</td><td class="definition">A large natural stream of water flowing to an ocean or lake. / 流入海洋或湖泊的大型天然水流。</td></tr>
+                    <tr><td class="icon-cell">🌲</td><td class="eng-term">Forest</td><td class="chi-term">森林</td><td class="definition">A large area covered with trees. / 被树木覆盖的大片区域。</td></tr>
+                    <tr><td class="icon-cell">🌾</td><td class="eng-term">Plain</td><td class="chi-term">平原</td><td class="definition">A large area of flat land with few trees. / 树木稀少的大片平坦土地。</td></tr>
+                    <tr><td class="icon-cell">🏔️</td><td class="eng-term">Valley</td><td class="chi-term">山谷</td><td class="definition">Low land between mountains or hills. / 山脉或丘陵之间的低地。</td></tr>
+                    <tr><td class="icon-cell">🌡️</td><td class="eng-term">Climate</td><td class="chi-term">气候</td><td class="definition">The usual weather conditions in a place over a long time. / 一个地方长期的通常天气状况。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Region</td><td class="chi-term">地区</td><td class="definition">An area with similar features (land, climate, culture). / 具有相似特征（土地、气候、文化）的区域。</td></tr>
+                    <tr><td class="icon-cell">🗺️</td><td class="eng-term">Continents</td><td class="chi-term">大洲</td><td class="definition">The seven large land masses on Earth: Asia, Africa, North America, etc. / 地球上的七大块陆地：亚洲、非洲、北美洲等。</td></tr>
+                    <tr><td class="icon-cell">🇺🇸</td><td class="eng-term">Country</td><td class="chi-term">国家</td><td class="definition">A nation with its own government and borders. / 拥有自己的政府和边界的民族。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">State</td><td class="chi-term">州</td><td class="definition">A part of a country (like California). / 国家的一部分（如加利福尼亚州）。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Capital</td><td class="chi-term">首都</td><td class="definition">The city where a country's or state's government is located. / 国家或州政府所在的城市。</td></tr>
+                    <tr><td class="icon-cell">🗽</td><td class="eng-term">Symbol</td><td class="chi-term">象征</td><td class="definition">Something that stands for something else, like a flag for a country. / 代表其他事物的东西，如国旗代表国家。</td></tr>
+                    <tr><td class="icon-cell">🗽</td><td class="eng-term">Monument</td><td class="chi-term">纪念碑</td><td class="definition">A structure built to remember a person or event. / 为纪念某人或事件而建的建筑物。</td></tr>
+                    <!-- New terms -->
+                    <tr><td class="icon-cell">🌏</td><td class="eng-term">Hemisphere</td><td class="chi-term">半球</td><td class="definition">Half of Earth, divided into Northern and Southern or Eastern and Western. / 地球的一半，分为北半球和南半球或东半球和西半球。</td></tr>
+                    <tr><td class="icon-cell">🧭</td><td class="eng-term">Latitude</td><td class="chi-term">纬度</td><td class="definition">Lines that run east-west and measure distance north or south of the Equator. / 东西方向的线，测量赤道以北或以南的距离。</td></tr>
+                    <tr><td class="icon-cell">🧭</td><td class="eng-term">Longitude</td><td class="chi-term">经度</td><td class="definition">Lines that run north-south and measure distance east or west of the Prime Meridian. / 南北方向的线，测量本初子午线以东或以西的距离。</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 3 – CIVICS & GOVERNMENT (with icons) -->
+        <section id="civics">
+            <h2>3. Civics & Government <span class="chi">公民与政府</span></h2>
+            <table class="glossary-table">
+                <thead><tr><th>Icon</th><th>English</th><th>简体中文</th><th>Definition / 定义</th></tr></thead>
+                <tbody>
+                    <tr><td class="icon-cell">👤</td><td class="eng-term">Citizen</td><td class="chi-term">公民</td><td class="definition">A legal member of a country with rights and responsibilities. / 一个国家的合法成员，享有权利并承担义务。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Government</td><td class="chi-term">政府</td><td class="definition">The group of people who run a country, state, or city. / 管理国家、州或城市的一群人。</td></tr>
+                    <tr><td class="icon-cell">⚖️</td><td class="eng-term">Law</td><td class="chi-term">法律</td><td class="definition">A rule made by the government that everyone must follow. / 政府制定的每个人都必须遵守的规则。</td></tr>
+                    <tr><td class="icon-cell">🗳️</td><td class="eng-term">Vote</td><td class="chi-term">投票</td><td class="definition">To choose a leader or decide an issue in an election. / 在选举中选择领导或决定问题。</td></tr>
+                    <tr><td class="icon-cell">📝</td><td class="eng-term">Election</td><td class="chi-term">选举</td><td class="definition">An event where people vote for someone or something. / 人们投票选举某人或某事的活动。</td></tr>
+                    <tr><td class="icon-cell">🤵</td><td class="eng-term">Mayor</td><td class="chi-term">市长</td><td class="definition">The leader of a city or town. / 城市或镇的领导者。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Governor</td><td class="chi-term">州长</td><td class="definition">The leader of a state in the U.S. / 美国一个州的领导者。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Congress</td><td class="chi-term">国会</td><td class="definition">The part of the U.S. government that makes laws (Senate and House). / 美国政府制定法律的部分（参议院和众议院）。</td></tr>
+                    <tr><td class="icon-cell">⚖️</td><td class="eng-term">Supreme Court</td><td class="chi-term">最高法院</td><td class="definition">The highest court in the U.S., which makes sure laws follow the Constitution. / 美国最高级别的法院，确保法律符合宪法。</td></tr>
+                    <tr><td class="icon-cell">📜</td><td class="eng-term">Constitution</td><td class="chi-term">宪法</td><td class="definition">A written document that outlines the basic laws and principles of a country. / 概述一个国家基本法律和原则的书面文件。</td></tr>
+                    <tr><td class="icon-cell">🦅</td><td class="eng-term">Democracy</td><td class="chi-term">民主</td><td class="definition">A government where the people have the power to vote. / 人民有权投票的政府。</td></tr>
+                    <tr><td class="icon-cell">👑</td><td class="eng-term">Monarchy</td><td class="chi-term">君主制</td><td class="definition">A government led by a king or queen. / 由国王或女王领导的政府。</td></tr>
+                    <tr><td class="icon-cell">🔒</td><td class="eng-term">Rights</td><td class="chi-term">权利</td><td class="definition">Things you are allowed to do or have (like freedom of speech). / 你被允许做或拥有的事情（如言论自由）。</td></tr>
+                    <tr><td class="icon-cell">🧹</td><td class="eng-term">Responsibility</td><td class="chi-term">责任</td><td class="definition">Something you should do (like obey laws, pay taxes). / 你应该做的事情（如遵守法律、纳税）。</td></tr>
+                    <tr><td class="icon-cell">🚩</td><td class="eng-term">Flag</td><td class="chi-term">国旗</td><td class="definition">A piece of cloth with colors and symbols that represents a country. / 带有颜色和象征的布料，代表一个国家。</td></tr>
+                    <tr><td class="icon-cell">🎵</td><td class="eng-term">Anthem</td><td class="chi-term">国歌</td><td class="definition">The official song of a country. / 一个国家的官方歌曲。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Public service</td><td class="chi-term">公共服务</td><td class="definition">A job that helps the community (firefighter, teacher, police officer). / 帮助社区的工作（消防员、教师、警察）。</td></tr>
+                    <!-- New terms -->
+                    <tr><td class="icon-cell">🤝</td><td class="eng-term">Treaty</td><td class="chi-term">条约</td><td class="definition">A formal agreement between countries. / 国家间的正式协议。</td></tr>
+                    <tr><td class="icon-cell">🗳️</td><td class="eng-term">Ballot</td><td class="chi-term">选票</td><td class="definition">The paper or system used to vote. / 用于投票的纸张或系统。</td></tr>
+                    <tr><td class="icon-cell">🏛️</td><td class="eng-term">Cabinet</td><td class="chi-term">内阁</td><td class="definition">A group of advisors to the president or leader. / 总统或领导人的顾问团。</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 4 – ECONOMICS & CULTURE (with icons) -->
+        <section id="economics">
+            <h2>4. Economics & Culture <span class="chi">经济与文化</span></h2>
+            <table class="glossary-table">
+                <thead><tr><th>Icon</th><th>English</th><th>简体中文</th><th>Definition / 定义</th></tr></thead>
+                <tbody>
+                    <tr><td class="icon-cell">💰</td><td class="eng-term">Money</td><td class="chi-term">钱</td><td class="definition">Coins and bills used to buy things. / 用于购买物品的硬币和纸币。</td></tr>
+                    <tr><td class="icon-cell">🛒</td><td class="eng-term">Goods</td><td class="chi-term">商品</td><td class="definition">Physical items that people buy (toys, food). / 人们购买的实物（玩具、食物）。</td></tr>
+                    <tr><td class="icon-cell">💇</td><td class="eng-term">Services</td><td class="chi-term">服务</td><td class="definition">Work done for others (haircut, teaching). / 为他人所做的工作（理发、教学）。</td></tr>
+                    <tr><td class="icon-cell">👨‍🌾</td><td class="eng-term">Producer</td><td class="chi-term">生产者</td><td class="definition">A person or company that makes goods. / 制造商品的人或公司。</td></tr>
+                    <tr><td class="icon-cell">👩‍🛒</td><td class="eng-term">Consumer</td><td class="chi-term">消费者</td><td class="definition">A person who buys goods and services. / 购买商品和服务的人。</td></tr>
+                    <tr><td class="icon-cell">🔄</td><td class="eng-term">Barter</td><td class="chi-term">物物交换</td><td class="definition">Trading goods or services without using money. / 不使用金钱交换商品或服务。</td></tr>
+                    <tr><td class="icon-cell">💵</td><td class="eng-term">Tax</td><td class="chi-term">税</td><td class="definition">Money paid to the government for public services. / 为公共服务支付给政府的钱。</td></tr>
+                    <tr><td class="icon-cell">📊</td><td class="eng-term">Budget</td><td class="chi-term">预算</td><td class="definition">A plan for how to spend money. / 如何花钱的计划。</td></tr>
+                    <tr><td class="icon-cell">🏦</td><td class="eng-term">Bank</td><td class="chi-term">银行</td><td class="definition">A place to keep, save, or borrow money. / 存放、储蓄或借贷金钱的地方。</td></tr>
+                    <tr><td class="icon-cell">🛳️</td><td class="eng-term">Import</td><td class="chi-term">进口</td><td class="definition">To bring goods into a country from another country. / 从另一个国家将商品带入本国。</td></tr>
+                    <tr><td class="icon-cell">✈️</td><td class="eng-term">Export</td><td class="chi-term">出口</td><td class="definition">To send goods to another country to sell. / 将商品运往另一个国家销售。</td></tr>
+                    <tr><td class="icon-cell">🎭</td><td class="eng-term">Culture</td><td class="chi-term">文化</td><td class="definition">The beliefs, customs, art, and way of life of a group of people. / 一群人的信仰、习俗、艺术和生活方式。</td></tr>
+                    <tr><td class="icon-cell">🎎</td><td class="eng-term">Custom</td><td class="chi-term">习俗</td><td class="definition">A traditional way of behaving or doing something. / 传统的行事方式。</td></tr>
+                    <tr><td class="icon-cell">🗣️</td><td class="eng-term">Language</td><td class="chi-term">语言</td><td class="definition">Words and rules used by people to communicate. / 人们用来交流的词语和规则。</td></tr>
+                    <tr><td class="icon-cell">⛪</td><td class="eng-term">Religion</td><td class="chi-term">宗教</td><td class="definition">A system of belief in a god or gods. / 信仰神或众神的体系。</td></tr>
+                    <tr><td class="icon-cell">👥</td><td class="eng-term">Diversity</td><td class="chi-term">多样性</td><td class="definition">Having many different cultures, races, or backgrounds together. / 拥有许多不同的文化、种族或背景。</td></tr>
+                    <!-- New terms -->
+                    <tr><td class="icon-cell">🏭</td><td class="eng-term">Industry</td><td class="chi-term">工业</td><td class="definition">The making of goods in factories. / 在工厂中制造商品。</td></tr>
+                    <tr><td class="icon-cell">🚜</td><td class="eng-term">Agriculture</td><td class="chi-term">农业</td><td class="definition">Farming and growing crops. / 种植庄稼和耕作。</td></tr>
+                    <tr><td class="icon-cell">💼</td><td class="eng-term">Career</td><td class="chi-term">职业</td><td class="definition">A job that a person does for a long time. / 一个人长期从事的工作。</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 5 – WORLD CULTURES & TRADITIONS (with icons) -->
+        <section id="world">
+            <h2>5. World Cultures & Traditions <span class="chi">世界文化与传统</span></h2>
+            <table class="glossary-table">
+                <thead><tr><th>Icon</th><th>English</th><th>简体中文</th><th>Definition / 定义</th></tr></thead>
+                <tbody>
+                    <tr><td class="icon-cell">🌎</td><td class="eng-term">World</td><td class="chi-term">世界</td><td class="definition">The whole Earth and all its countries and people. / 整个地球及其所有国家和人民。</td></tr>
+                    <tr><td class="icon-cell">🏯</td><td class="eng-term">Country</td><td class="chi-term">国家</td><td class="definition">A nation with its own government, land, and people. / 拥有自己的政府、土地和人民的民族。</td></tr>
+                    <tr><td class="icon-cell">🗣️</td><td class="eng-term">Native</td><td class="chi-term">本土的</td><td class="definition">Original people or things of a place. / 一个地方的原始人或事物。</td></tr>
+                    <tr><td class="icon-cell">🎊</td><td class="eng-term">Festival</td><td class="chi-term">节日</td><td class="definition">A special celebration, often with music and food. / 通常有音乐和食物的特别庆祝活动。</td></tr>
+                    <tr><td class="icon-cell">🎆</td><td class="eng-term">Holiday</td><td class="chi-term">假日</td><td class="definition">A day of celebration or remembrance (like New Year, Diwali). / 庆祝或纪念的日子（如新年、排灯节）。</td></tr>
+                    <tr><td class="icon-cell">🥘</td><td class="eng-term">Food</td><td class="chi-term">食物</td><td class="definition">What people eat; often reflects culture. / 人们吃的东西；常反映文化。</td></tr>
+                    <tr><td class="icon-cell">👗</td><td class="eng-term">Clothing</td><td class="chi-term">服装</td><td class="definition">Traditional dress, like a kimono or sari. / 传统服装，如和服或纱丽。</td></tr>
+                    <tr><td class="icon-cell">🎵</td><td class="eng-term">Music</td><td class="chi-term">音乐</td><td class="definition">Sounds made by instruments or voices. / 乐器或人声发出的声音。</td></tr>
+                    <tr><td class="icon-cell">💃</td><td class="eng-term">Dance</td><td class="chi-term">舞蹈</td><td class="definition">Moving rhythmically to music. / 随着音乐有节奏地移动。</td></tr>
+                    <tr><td class="icon-cell">🎨</td><td class="eng-term">Art</td><td class="chi-term">艺术</td><td class="definition">Paintings, sculptures, and other creative works. / 绘画、雕塑和其他创造性作品。</td></tr>
+                    <tr><td class="icon-cell">🏠</td><td class="eng-term">Shelter</td><td class="chi-term">住所</td><td class="definition">A place to live, like a house or hut. / 居住的地方，如房子或小屋。</td></tr>
+                    <tr><td class="icon-cell">👪</td><td class="eng-term">Family</td><td class="chi-term">家庭</td><td class="definition">Parents, children, and relatives. / 父母、孩子和亲戚。</td></tr>
+                    <tr><td class="icon-cell">📖</td><td class="eng-term">Storytelling</td><td class="chi-term">讲故事</td><td class="definition">Telling stories, often passed down through generations. / 讲故事，通常代代相传。</td></tr>
+                    <tr><td class="icon-cell">🕌</td><td class="eng-term">Place of worship</td><td class="chi-term">礼拜场所</td><td class="definition">A building where people practice religion (church, mosque, temple). / 人们进行宗教活动的建筑（教堂、清真寺、寺庙）。</td></tr>
+                    <tr><td class="icon-cell">🌏</td><td class="eng-term">Heritage</td><td class="chi-term">遗产</td><td class="definition">Traditions, languages, and buildings passed from the past. / 从过去传承下来的传统、语言和建筑。</td></tr>
+                    <!-- New terms -->
+                    <tr><td class="icon-cell">🗣️</td><td class="eng-term">Dialect</td><td class="chi-term">方言</td><td class="definition">A regional form of a language. / 一种语言的地方形式。</td></tr>
+                    <tr><td class="icon-cell">🥁</td><td class="eng-term">Folklore</td><td class="chi-term">民间传说</td><td class="definition">Traditional stories and beliefs of a culture. / 一个文化的传统故事和信仰。</td></tr>
+                    <tr><td class="icon-cell">🍲</td><td class="eng-term">Cuisine</td><td class="chi-term">烹饪</td><td class="definition">A style of cooking from a particular region. / 特定地区的烹饪风格。</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <footer>
+        <p>🌍 Created for elementary students (Grades 1–6) · 供小学生使用（一年级至六年级）</p>
+        <p>Sources: NYSED social studies framework, elementary curricula · 参考纽约州社会科纲要及课堂常用词</p>
+        <div class="footnote">
+            ⭐ <strong>Features:</strong> Pinyin, text-to-speech (click 🔊), search, flashcard mode with shuffle, visual icons, and front-language toggle.<br>
+            ⭐ <strong>使用方法：</strong> 拼音、点击🔊发声、搜索、抽认卡模式（可随机排序、切换正反面语言），配有图标。
+        </div>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- Data collection ----------
+        let glossaryData = [];
+        const sections = document.querySelectorAll('#glossarySections section');
+        sections.forEach(section => {
+            const rows = section.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                    const english = cells[1].innerText.trim();
+                    const chinese = cells[2].innerText.trim();
+                    const definition = cells[3].innerText.trim();
+                    if (english && chinese) {
+                        glossaryData.push({
+                            english: english,
+                            chinese: chinese,
+                            example: definition,  // use definition as flashcard example
+                            section: section.id
+                        });
+                    }
+                }
+            });
+        });
+
+        // ---------- Flashcard state ----------
+        let currentIndex = 0;
+        let flashcardMode = false;
+        let shuffledIndices = [];
+        let frontIsEnglish = true;
+        let isFlipped = false;
+
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const flashcardBtn = document.getElementById('flashcardBtn');
+        const glossaryBtn = document.getElementById('glossaryBtn');
+        const cardEnglish = document.getElementById('cardEnglish');
+        const cardChinese = document.getElementById('cardChinese');
+        const cardExample = document.getElementById('cardExample');
+        const prevBtn = document.getElementById('prevCard');
+        const nextBtn = document.getElementById('nextCard');
+        const shuffleBtn = document.getElementById('shuffleCards');
+        const toggleFrontBtn = document.getElementById('toggleFront');
+        const cardCount = document.getElementById('cardCount');
+        const searchInput = document.getElementById('searchInput');
+
+        function showCard(index) {
+            if (!flashcardMode || glossaryData.length === 0) return;
+            let dataIndex;
+            if (shuffledIndices.length > 0 && index < shuffledIndices.length) {
+                dataIndex = shuffledIndices[index];
+            } else {
+                dataIndex = index % glossaryData.length;
+            }
+            const item = glossaryData[dataIndex];
+            cardEnglish.innerText = item.english;
+            cardChinese.innerText = item.chinese;
+            cardExample.innerText = item.example;
+
+            isFlipped = false;
+            updateCardDisplay();
+
+            prevBtn.disabled = (index === 0);
+            nextBtn.disabled = (index === (shuffledIndices.length ? shuffledIndices.length - 1 : glossaryData.length - 1));
+            cardCount.innerText = `${index+1} / ${shuffledIndices.length || glossaryData.length}`;
+        }
+
+        function updateCardDisplay() {
+            if (!flashcardMode) return;
+            if (frontIsEnglish) {
+                if (!isFlipped) {
+                    cardEnglish.style.display = 'block';
+                    cardChinese.style.display = 'none';
+                    cardExample.style.display = 'none';
+                } else {
+                    cardEnglish.style.display = 'none';
+                    cardChinese.style.display = 'block';
+                    cardExample.style.display = 'block';
+                }
+            } else {
+                if (!isFlipped) {
+                    cardEnglish.style.display = 'none';
+                    cardChinese.style.display = 'block';
+                    cardExample.style.display = 'none';
+                } else {
+                    cardEnglish.style.display = 'block';
+                    cardChinese.style.display = 'none';
+                    cardExample.style.display = 'block';
+                }
+            }
+        }
+
+        window.flipCard = function() {
+            if (!flashcardMode) return;
+            isFlipped = !isFlipped;
+            updateCardDisplay();
+        };
+
+        function nextCard() {
+            if (!flashcardMode) return;
+            if (shuffledIndices.length) {
+                if (currentIndex < shuffledIndices.length - 1) {
+                    currentIndex++;
+                    showCard(currentIndex);
+                }
+            } else {
+                if (currentIndex < glossaryData.length - 1) {
+                    currentIndex++;
+                    showCard(currentIndex);
+                }
+            }
+        }
+
+        function prevCard() {
+            if (!flashcardMode) return;
+            if (currentIndex > 0) {
+                currentIndex--;
+                showCard(currentIndex);
+            }
+        }
+
+        function shuffleCards() {
+            if (!flashcardMode) return;
+            shuffledIndices = Array.from({length: glossaryData.length}, (_, i) => i);
+            for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+            }
+            currentIndex = 0;
+            showCard(currentIndex);
+        }
+
+        function toggleFront() {
+            frontIsEnglish = !frontIsEnglish;
+            toggleFrontBtn.innerText = frontIsEnglish ? 'Front: English' : 'Front: 中文';
+            isFlipped = false;
+            updateCardDisplay();
+        }
+
+        function enterFlashcardMode() {
+            flashcardMode = true;
+            flashcardContainer.style.display = 'flex';
+            glossaryBtn.style.display = 'inline-block';
+            flashcardBtn.style.display = 'none';
+            shuffledIndices = [];
+            currentIndex = 0;
+            frontIsEnglish = true;
+            toggleFrontBtn.innerText = 'Front: English';
+            isFlipped = false;
+            showCard(0);
+        }
+
+        function exitFlashcardMode() {
+            flashcardMode = false;
+            flashcardContainer.style.display = 'none';
+            glossaryBtn.style.display = 'none';
+            flashcardBtn.style.display = 'inline-block';
+        }
+
+        flashcardBtn.addEventListener('click', enterFlashcardMode);
+        glossaryBtn.addEventListener('click', exitFlashcardMode);
+        prevBtn.addEventListener('click', prevCard);
+        nextBtn.addEventListener('click', nextCard);
+        shuffleBtn.addEventListener('click', shuffleCards);
+        toggleFrontBtn.addEventListener('click', toggleFront);
+
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const tables = document.querySelectorAll('.glossary-table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        });
+
+        function addPinyinAndSpeakers() {
+            const chiCells = document.querySelectorAll('.chi-term');
+            chiCells.forEach(cell => {
+                const chineseText = cell.innerText.trim();
+                if (!chineseText) return;
+                if (window.pinyin) {
+                    const pinyinText = window.pinyin(chineseText, { style: window.pinyin.STYLE_TONE, segment: true }).join(' ');
+                    const ruby = document.createElement('ruby');
+                    ruby.innerHTML = `${chineseText}<rt>${pinyinText}</rt>`;
+                    cell.innerHTML = '';
+                    cell.appendChild(ruby);
+                }
+                const speaker = document.createElement('span');
+                speaker.className = 'speaker';
+                speaker.innerHTML = '🔊';
+                speaker.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const utterance = new SpeechSynthesisUtterance(chineseText);
+                    utterance.lang = 'zh-CN';
+                    speechSynthesis.speak(utterance);
+                });
+                cell.appendChild(speaker);
+            });
+            const engCells = document.querySelectorAll('.eng-term');
+            engCells.forEach(cell => {
+                const engText = cell.innerText.trim();
+                if (!engText) return;
+                const speaker = document.createElement('span');
+                speaker.className = 'speaker';
+                speaker.innerHTML = '🔊';
+                speaker.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const utterance = new SpeechSynthesisUtterance(engText);
+                    utterance.lang = 'en-US';
+                    speechSynthesis.speak(utterance);
+                });
+                cell.appendChild(speaker);
+            });
+        }
+
+        window.addEventListener('load', addPinyinAndSpeakers);
+    })();
+</script>
+</body>
+</html>
